@@ -3,25 +3,32 @@ package com.chat.serveur;
 import com.chat.commun.net.Connexion;
 
 import java.util.ArrayList;
+import java.util.List; 
+import java.util.Vector;
+
 
 /**
- * Cette classe étend (hérite) la classe abstraite Serveur et y ajoute le nécessaire pour que le
+ * Cette classe ï¿½tend (hï¿½rite) la classe abstraite Serveur et y ajoute le nï¿½cessaire pour que le
  * serveur soit un serveur de chat.
  *
- * @author Abdelmoumène Toudeft (Abdelmoumene.Toudeft@etsmtl.ca)
+ * @author Abdelmoumï¿½ne Toudeft (Abdelmoumene.Toudeft@etsmtl.ca)
  * @version 1.0
  * @since 2023-09-15
  */
 public class ServeurChat extends Serveur {
 
+	private Vector<String> historique= new Vector<>();
+	private List<Invitation> Invitations =new ArrayList<>();
+	private List<SalonPrive> salonsPrives = new ArrayList<>();
     /**
-     * Crée un serveur de chat qui va écouter sur le port spécifié.
+     * Crï¿½e un serveur de chat qui va ï¿½couter sur le port spï¿½cifiï¿½.
      *
-     * @param port int Port d'écoute du serveur
+     * @param port int Port d'ï¿½coute du serveur
      */
     public ServeurChat(int port) {
         super(port);
     }
+    
 
     @Override
     public synchronized boolean ajouter(Connexion connexion) {
@@ -34,13 +41,157 @@ public class ServeurChat extends Serveur {
         }
         return super.ajouter(connexion);
     }
+    
+    public void envoyerATousSauf(String str, String aliasExpediteur , Connexion connexion) {
+    	for (Connexion cnx:connectes) {
+    		if (!cnx.getAlias().equals(aliasExpediteur)) {
+    			cnx.envoyer(aliasExpediteur+">>"+str);
+    		}
+    	}
+    }
+    
+    public void ajouterHistorique(String message, String aliasExpediteur) {
+    	String aliasEtMessage= message+">>"+aliasExpediteur;
+    	historique.add(aliasEtMessage);
+    }
+    
+    
+    public void envoyerInvitation(String aliasHost, String aliasInvite, Connexion connexion) {
+    	 System.out.println("Envoi d'invitation de " + aliasHost + " Ã  " + aliasInvite);
+    		if (!aliasHost.equals(aliasInvite)) {
+    			for (Connexion cnx : connectes) {
+    				  System.out.println("VÃ©rification de la connexion : " + cnx.getAlias());
+    				if (cnx.getAlias().equals(aliasInvite)) {
+    					 System.out.println("Envoi d'INVITE Ã  " + aliasInvite);
+    					cnx.envoyer(aliasHost+" vous invite en privÃ©e");
+    					break;
+    				}
+    			}
+    		}
+    }
+   
+    
+    public List<Invitation>getInvitations(){
+    	return Invitations;
+    }
+    
+    public void addInvitation(Invitation invitation) {
+    	Invitations.add(invitation);
+    }
+    
+    public void declineInvitation(Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
+    	Invitations.remove(invitation);
+    	for (Connexion cnx : connectes) {
+    		if (cnx.getAlias().equals(aliasHost)) {
+    			cnx.envoyer(aliasInvite+" a refusÃ© votre invitation");
+    			break;
+    		}
+    	}
+    }
+    
+    public void cancelInvitation (Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
+    	Invitations.remove(invitation);
+    	for (Connexion cnx : connectes) {
+    		if (cnx.getAlias().equals(aliasHost)) {
+    			cnx.envoyer(aliasInvite+" annulation de l'invitation");
+    			break;
+    		}
+    	}
+    }
+    
+    public void getInvitationsRecues(String aliasDemandeur) {
+        //List<String> invitationsRecues = new ArrayList<>();
+        
+        for (Invitation invitation :Invitations) {
+            if (invitation.getInvite().equals(aliasDemandeur)) {
+            	for (Connexion cnx : connectes) {
+            		if (cnx.getAlias().equals(aliasDemandeur)) {
+            	String Host=invitation.getHost();
+                cnx.envoyer("INV " + Host);
+            		}
+            	}
+            }
+        
+        }
+    }
+   
+    
+    
+
+    public List<SalonPrive>getSalonsPrives(){
+    	return salonsPrives;
+    }
+    
+    public void addSalonPrive(String aliasHost, String aliasInvite) {
+    	
+    	SalonPrive salonPrive =new SalonPrive(aliasHost,aliasInvite);
+    	salonsPrives.add(salonPrive);
+    }
+    
+    public SalonPrive findSalonPrive(String alias1, String alias2) {
+        for (SalonPrive salon : salonsPrives) { 
+            if ((salon.getHost().equals(alias1) && salon.getInvite().equals(alias2)) ||
+                (salon.getHost().equals(alias2) && salon.getInvite().equals(alias1))) {
+               
+                return salon;
+            }
+        }
+        return null; 
+    }
+    
+   // public void removeSalon(Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
+    	//SalonPrive.remove(salon);
+    	//for (Connexion cnx : connectes) {
+    		//if (cnx.getAlias().equals(aliasHost)) {
+    			//cnx.envoyer(aliasInvite+" a refusÃ© votre invitation");
+    			//break;
+    		//}
+    	//}
+    //}
+    
+    public void envoyerMessagePrive(String aliasHost, String aliasInvite, String prvmessage) {
+   
+   		if (!aliasHost.equals(aliasInvite)) {
+   			for (Connexion cnx : connectes) {
+   				 
+   				if (cnx.getAlias().equals(aliasInvite)) {
+   					 
+   					cnx.envoyer("PRV"+prvmessage);
+   					break;
+   				}
+   			}
+   		}
+   }
+    
+   // public void quitSalon(String aliasDemandeur, String aliasCible) {
+       // SalonPrive salon = findSalonPrive(aliasDemandeur, aliasCible);
+        //if (salon != null) {
+          //  salon.removeSalon(aliasDemandeur);
+            //String messageDepart = aliasDemandeur + " a quittÃ© le salon privÃ©.";
+           // for (String alias : salon.getParticipants()) {
+                //if (!alias.equals(aliasDemandeur)) {
+                    
+                   // if (participantCnx != null) {
+                       // participantCnx.envoyer(messageDepart);
+                    //}
+                //}
+           // }
+      //  }
+   // }
+
+    
+    
+    
+    
+
+    
     /**
-     * Valide l'arrivée d'un nouveau client sur le serveur. Cette redéfinition
-     * de la méthode héritée de Serveur vérifie si le nouveau client a envoyé
-     * un alias composé uniquement des caractères a-z, A-Z, 0-9, - et _.
+     * Valide l'arrivï¿½e d'un nouveau client sur le serveur. Cette redï¿½finition
+     * de la mï¿½thode hï¿½ritï¿½e de Serveur vï¿½rifie si le nouveau client a envoyï¿½
+     * un alias composï¿½ uniquement des caractï¿½res a-z, A-Z, 0-9, - et _.
      *
-     * @param connexion Connexion la connexion représentant le client
-     * @return boolean true, si le client a validé correctement son arrivée, false, sinon
+     * @param connexion Connexion la connexion reprï¿½sentant le client
+     * @return boolean true, si le client a validï¿½ correctement son arrivï¿½e, false, sinon
      */
     @Override
     protected boolean validerConnexion(Connexion connexion) {
@@ -64,7 +215,7 @@ public class ServeurChat extends Serveur {
         if (!res)
             return false;
         for (Connexion cnx:connectes) {
-            if (texte.equalsIgnoreCase(cnx.getAlias())) { //alias déjà utilisé
+            if (texte.equalsIgnoreCase(cnx.getAlias())) { //alias dï¿½jï¿½ utilisï¿½
                 res = false;
                 break;
             }
@@ -74,9 +225,9 @@ public class ServeurChat extends Serveur {
     }
 
     /**
-     * Retourne la liste des alias des connectés au serveur dans une chaîne de caractères.
+     * Retourne la liste des alias des connectï¿½s au serveur dans une chaï¿½ne de caractï¿½res.
      *
-     * @return String chaîne de caractères contenant la liste des alias des membres connectés sous la
+     * @return String chaï¿½ne de caractï¿½res contenant la liste des alias des membres connectï¿½s sous la
      * forme alias1:alias2:alias3 ...
      */
     public String list() {
@@ -86,14 +237,19 @@ public class ServeurChat extends Serveur {
         return s;
     }
     /**
-     * Retourne la liste des messages de l'historique de chat dans une chaîne
-     * de caractères.
+     * Retourne la liste des messages de l'historique de chat dans une chaï¿½ne
+     * de caractï¿½res.
      *
-     * @return String chaîne de caractères contenant la liste des alias des membres connectés sous la
+     * @return String chaï¿½ne de caractï¿½res contenant la liste des alias des membres connectï¿½s sous la
      * forme message1\nmessage2\nmessage3 ...
      */
     public String historique() {
-        String s = "";
-        return s;
+    	StringBuilder historiqueList= new StringBuilder();
+    	for (String message : historique) {
+    		historiqueList.append(message+"\n");
+    	}
+        //String s = "";
+        return historiqueList.toString() ;
+        
     }
 }
