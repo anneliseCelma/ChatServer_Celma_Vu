@@ -57,12 +57,9 @@ public class ServeurChat extends Serveur {
     
     
     public void envoyerInvitation(String aliasHost, String aliasInvite, Connexion connexion) {
-    	 System.out.println("Envoi d'invitation de " + aliasHost + " à " + aliasInvite);
     		if (!aliasHost.equals(aliasInvite)) {
-    			for (Connexion cnx : connectes) {
-    				  System.out.println("Vérification de la connexion : " + cnx.getAlias());
-    				if (cnx.getAlias().equals(aliasInvite)) {
-    					 System.out.println("Envoi d'INVITE à " + aliasInvite);
+    			for (Connexion cnx : connectes) {	
+    				if (cnx.getAlias().equals(aliasInvite)) {	 
     					cnx.envoyer(aliasHost+" vous invite en privée");
     					break;
     				}
@@ -79,16 +76,49 @@ public class ServeurChat extends Serveur {
     	Invitations.add(invitation);
     }
     
-    public void declineInvitation(Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
-    	Invitations.remove(invitation);
-    	for (Connexion cnx : connectes) {
-    		if (cnx.getAlias().equals(aliasHost)) {
-    			cnx.envoyer(aliasInvite+" a refusé votre invitation");
-    			break;
-    		}
+    public Invitation findInvitation(String alias1, String alias2) {
+        for (Invitation invitation : Invitations) {
+            if (invitation.getHost().equals(alias1) || invitation.getHost().equals(alias2) && invitation.getInvite().equals(alias2)|| invitation.getInvite().equals(alias1) ){
+                return invitation;
+            }
+        }
+        return null;
+    }
+    
+    public void declineOrCancelInvitation(Invitation invitation, String alias1,String alias2,Connexion connexion) {
+    	
+    	if (invitation.getHost().equals(alias1)) {
+    		Invitations.remove(invitation);
+        	for (Connexion cnx : connectes) {
+        		if (cnx.getAlias().equals(alias2)) {
+        			cnx.envoyer( "annulation de l'invitation par "+alias1);
+        			break;
+        		}
+        	}
+    	}
+    	else if(invitation.getHost().equals(alias2)){
+    		
+    		Invitations.remove(invitation);
+        	for (Connexion cnx : connectes) {
+        		if (cnx.getAlias().equals(alias2)) {
+        			cnx.envoyer(alias1+" a refusé votre invitation");
+        			break;
+        		}
+        	}
+    		
     	}
     }
     
+//    public void declineInvitation(Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
+//    	Invitations.remove(invitation);
+//    	for (Connexion cnx : connectes) {
+//    		if (cnx.getAlias().equals(aliasHost)) {
+//    			cnx.envoyer(aliasInvite+" a refusé votre invitation");
+//    			break;
+//    		}
+//    	}
+//    }
+//    
     public void cancelInvitation (Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
     	Invitations.remove(invitation);
     	for (Connexion cnx : connectes) {
@@ -107,7 +137,7 @@ public class ServeurChat extends Serveur {
             	for (Connexion cnx : connectes) {
             		if (cnx.getAlias().equals(aliasDemandeur)) {
             	String Host=invitation.getHost();
-                cnx.envoyer("INV " + Host);
+                cnx.envoyer(Host+"\n");
             		}
             	}
             }
@@ -156,28 +186,46 @@ public class ServeurChat extends Serveur {
    				 
    				if (cnx.getAlias().equals(aliasInvite)) {
    					 
-   					cnx.envoyer("PRV"+prvmessage);
+   					cnx.envoyer("PRV "+prvmessage);
    					break;
    				}
    			}
    		}
    }
     
-   // public void quitSalon(String aliasDemandeur, String aliasCible) {
-       // SalonPrive salon = findSalonPrive(aliasDemandeur, aliasCible);
-        //if (salon != null) {
-          //  salon.removeSalon(aliasDemandeur);
-            //String messageDepart = aliasDemandeur + " a quitté le salon privé.";
-           // for (String alias : salon.getParticipants()) {
-                //if (!alias.equals(aliasDemandeur)) {
-                    
-                   // if (participantCnx != null) {
-                       // participantCnx.envoyer(messageDepart);
-                    //}
-                //}
-           // }
-      //  }
-   // }
+    public void closeSalonPrive(String aliasDemandeur, String aliasCible) {
+        SalonPrive salon = findSalonPrive(aliasDemandeur, aliasCible);
+        if (salon != null) {
+            removeSalonPrive(salon, aliasDemandeur, aliasCible);
+        }
+    }
+
+     
+    public void removeSalonPrive(SalonPrive salonPrive, String aliasDemandeur, String aliasCible) {
+    	salonsPrives.remove(salonPrive);
+    	for (Connexion cnx : connectes) {
+    		if ( cnx.getAlias().equals(aliasCible)) {
+    			cnx.envoyer(aliasDemandeur + " a quitté le salon privé.");
+    			break;
+    		}	
+	}
+    }
+    
+//    public void quitSalon(String aliasDemandeur, String aliasCible) {
+//       SalonPrive salon = findSalonPrive(aliasDemandeur, aliasCible);
+//        if (salon != null) {
+//            salon.removeSalonPrive(aliasDemandeur);
+//            String messageDepart = aliasDemandeur + " a quitté le salon privé.";
+//            for (String alias : salon.getParticipants()) {
+//                if (!alias.equals(aliasDemandeur)) {
+//                    
+//                    if (participantCnx != null) {
+//                        participantCnx.envoyer(messageDepart);
+//                    }
+//                }
+//            }
+//        }
+//   }
 
     
     

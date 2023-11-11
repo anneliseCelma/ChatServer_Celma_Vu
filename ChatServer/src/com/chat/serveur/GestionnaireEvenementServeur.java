@@ -19,6 +19,7 @@ import com.chat.serveur.SalonPrive;
 public class GestionnaireEvenementServeur implements GestionnaireEvenement {
     private Serveur serveur;
     private Invitation invitation;
+    private SalonPrive salonPrive;
 
     /**
      * Construit un gestionnaire d'�v�nements pour un serveur.
@@ -68,12 +69,11 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
                     	String aliasInvite=evenement.getArgument();
                     	//serveur.envoyerInvitation(aliasHost, aliasInvite,cnx);
                     	
-                    
                     	 boolean invitationTrouvee = false;
                     	 Invitation invitationExistante = null;
                     	
                     	  for (Invitation invitation : serveur.getInvitations()) {
-                    	        if (invitation.getHost().equals(aliasInvite) && invitation.getInvite().equals(aliasHost)) {
+                    	        if (invitation.getHost().equals(aliasHost) && invitation.getInvite().equals(aliasInvite)) {
                     	            invitationTrouvee = true;
                     	            invitationExistante = invitation;
                     	            break;
@@ -90,18 +90,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
                     	        serveur.addInvitation(nouvelleInvitation);
                     	        serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
                     	    }   
-                    	    
-                    	
-                    	//serveur.ajouterInvitation(aliasHost,aliasInvite);
-                    	//serveur.creerSalonPrive(aliasHost,aliasInvite);
-                    	//if ("INVITE".equals(commande)) {
-                    		//serveur.ajouterInvitation(aliasHost,aliasInvite);
-                    		//serveur.informerInvitation(aliasHost,aliasInvite);
-                    	//}else if("ACCEPT".equals(commande)) {
-                    	//	serveur.creerSalonPrive(aliasHost,aliasInvite);
-                    		//serveur.informerSalonPrive(aliasHost,aliasInvite);
-                    	//}
-                    	
+  	
                     	break;
                 case "ACCEPT" :
                 	aliasHost = evenement.getArgument();
@@ -110,10 +99,14 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
               
                 	break;
                 case "DECLINE":
-                	aliasHost = evenement.getArgument();
-                	aliasInvite=cnx.getAlias();
-                	serveur.declineInvitation(invitation,aliasInvite, aliasHost,cnx);
-                
+//                	aliasHost = evenement.getArgument();
+//                	aliasInvite=cnx.getAlias();
+//                	serveur.declineInvitation(invitation,aliasInvite, aliasHost,cnx);
+                	String alias1= cnx.getAlias();
+                	String alias2= evenement.getArgument();
+                	Invitation invitation = serveur.findInvitation(alias1, alias2);
+                	serveur.declineOrCancelInvitation(invitation,alias1,alias2,cnx);
+                	
                 	break;
                 	
                 case "PRV":
@@ -135,7 +128,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
                         }
                     } else {
                         
-                        cnx.envoyer("Commande PRV incorrecte. Utilisation : PRV alias2 message");
+                        cnx.envoyer("Commande PRV incorrecte.");
                     }
                     break;
                 case "INV":
@@ -146,7 +139,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
                 case "QUIT":
                 	aliasDemandeur = cnx.getAlias();
                 	String aliasCible= evenement.getArgument();
-                	//serveur.quitSalon(aliasDemandeur,aliasCible);
+                	serveur.closeSalonPrive(aliasDemandeur,aliasCible);
                 	break;
                 case "HIST":
                 	cnx.envoyer("HIST " + serveur.historique());
