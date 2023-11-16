@@ -1,11 +1,11 @@
 package com.chat.serveur;
 
 /**
- * Informations sur un serveur, utilisées par défaut.
+ * Informations sur un serveur, utilisï¿½es par dï¿½faut.
  */
 public interface Config {
     /**
-     * Port d'écoute du serveur.
+     * Port d'ï¿½coute du serveur.
      */
     int PORT_SERVEUR = 8888;
 }

@@ -14,47 +14,47 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 /**
- * Cette classe représente un serveur sur lequel des clients peuvent se connecter.
+ * Cette classe reprï¿½sente un serveur sur lequel des clients peuvent se connecter.
  *
- * @author Abdelmoumène Toudeft (Abdelmoumene.Toudeft@etsmtl.ca)
+ * @author Abdelmoumï¿½ne Toudeft (Abdelmoumene.Toudeft@etsmtl.ca)
  * @version 1.0
  * @since 2023-09-01
  */
 public class Serveur implements Lecteur {
 
-    //Liste des connectés au serveur :
+    //Liste des connectï¿½s au serveur :
     protected final Vector<Connexion> connectes = new Vector<>();
 
-    //Nouveaux clients qui ne se sont pas encore "identifiés":
+    //Nouveaux clients qui ne se sont pas encore "identifiï¿½s":
     private final Vector<Connexion> nouveaux = new Vector<>();
     //Ce thread s'occupe d'interagir avec les nouveaux pour valider leur connexion :
     private Thread threadNouveaux;
     private int port = 8888;
     //Thred qui attend de nouvelles connexions :
     private ThreadEcouteurDeConnexions ecouteurConnexions;
-    //Thread qui écoute l'arrivée de texte des clients connectés :
+    //Thread qui ï¿½coute l'arrivï¿½e de texte des clients connectï¿½s :
     private ThreadEcouteurDeTexte ecouteurTexte;
-    //Le serveur-socket utilisé par le serveur pour attendre que les clients se connectent :
+    //Le serveur-socket utilisï¿½ par le serveur pour attendre que les clients se connectent :
     private ServerSocket serverSocket;
-    //Indique si le serveur est déjà démarré ou non :
+    //Indique si le serveur est dï¿½jï¿½ dï¿½marrï¿½ ou non :
     private boolean demarre;
-    //Écouteur qui gère les événements correspondant à l'arrivée de texte de clients :
+    //ï¿½couteur qui gï¿½re les ï¿½vï¿½nements correspondant ï¿½ l'arrivï¿½e de texte de clients :
     protected GestionnaireEvenement gestionnaireEvenementServeur;
 
     /**
-     * Crée un serveur qui va écouter sur le port spécifié.
+     * Crï¿½e un serveur qui va ï¿½couter sur le port spï¿½cifiï¿½.
      *
-     * @param port int Port d'écoute du serveur
+     * @param port int Port d'ï¿½coute du serveur
      */
     public Serveur(int port) {
         this.port = port;
     }
 
     /**
-     * Démarre le serveur, s'il n'a pas déjà été démarré. Démarre le thread qui écoute l'arrivée de clients et le
-     * qui écoute l'arrivée de texte. Mets en place le gestionnaire des événements du serveur.
+     * Dï¿½marre le serveur, s'il n'a pas dï¿½jï¿½ ï¿½tï¿½ dï¿½marrï¿½. Dï¿½marre le thread qui ï¿½coute l'arrivï¿½e de clients et le
+     * qui ï¿½coute l'arrivï¿½e de texte. Mets en place le gestionnaire des ï¿½vï¿½nements du serveur.
      *
-     * @return boolean true, si le serveur a été démarré correctement, false, si le serveur a déjà été démarré ou si
+     * @return boolean true, si le serveur a ï¿½tï¿½ dï¿½marrï¿½ correctement, false, si le serveur a dï¿½jï¿½ ï¿½tï¿½ dï¿½marrï¿½ ou si
      */
     public boolean demarrer() {
         if (demarre) //Serveur deja demarre.
@@ -75,7 +75,7 @@ public class Serveur implements Lecteur {
     }
 
     /**
-     * Arrête le serveur en arrêtant les threads qui écoutent l'arrivée de client, l'arrivée de texte et le traitement
+     * Arrï¿½te le serveur en arrï¿½tant les threads qui ï¿½coutent l'arrivï¿½e de client, l'arrivï¿½e de texte et le traitement
      * des nouveaux clients.
      */
     public void arreter() {
@@ -92,7 +92,7 @@ public class Serveur implements Lecteur {
         } catch (IOException e) {
             System.out.println("serveurSocket erreur : " + e.getMessage());
         }
-        //On ferme toutes les connexions après avoir envoer "END." à chacun des clients :
+        //On ferme toutes les connexions aprï¿½s avoir envoer "END." ï¿½ chacun des clients :
         iterateur = connectes.listIterator();
         while (iterateur.hasNext()) {
             cnx = iterateur.next();
@@ -103,8 +103,8 @@ public class Serveur implements Lecteur {
     }
 
     /**
-     * Cette méthode bloque sur le ServerSocket du serveur jusqu'à ce qu'un client s'y connecte. Dans ce cas, elle
-     * crée la connexion vers ce client et l'ajoute à la liste des nouveaux connectés.
+     * Cette mï¿½thode bloque sur le ServerSocket du serveur jusqu'ï¿½ ce qu'un client s'y connecte. Dans ce cas, elle
+     * crï¿½e la connexion vers ce client et l'ajoute ï¿½ la liste des nouveaux connectï¿½s.
      */
     public void attendConnexion() {
         try {
@@ -128,7 +128,7 @@ public class Serveur implements Lecteur {
                             while (it.hasNext()) {
                                 connexion = it.next();
 
-                                //Vérifier ici si le client s'est bien identifié, si nécessaire
+                                //Vï¿½rifier ici si le client s'est bien identifiï¿½, si nï¿½cessaire
                                 verifOK = validerConnexion(connexion);
                                 if (verifOK) {
                                     it.remove();
@@ -151,26 +151,26 @@ public class Serveur implements Lecteur {
     }
 
     /**
-     * Valide l'arrivée d'un nouveau client sur le serveur. Cette implémentation
-     * par défaut valide automatiquement le client en retournant true.
-     * Cette méthode sera redéfinie dans les classes filles, comme ServerChat,
-     * pour implémenter une validation en fonction des besoins de l'application.
-     * Par exemple, ServerChat va vérifier si le nouveau client a fourni un
+     * Valide l'arrivï¿½e d'un nouveau client sur le serveur. Cette implï¿½mentation
+     * par dï¿½faut valide automatiquement le client en retournant true.
+     * Cette mï¿½thode sera redï¿½finie dans les classes filles, comme ServerChat,
+     * pour implï¿½menter une validation en fonction des besoins de l'application.
+     * Par exemple, ServerChat va vï¿½rifier si le nouveau client a fourni un
      * alias valide.
      *
-     * @param connexion Connexion la connexion représentant le client.
+     * @param connexion Connexion la connexion reprï¿½sentant le client.
      * @return boolean true.
      */
     protected boolean validerConnexion(Connexion connexion) {
         return true;
     }
     /**
-     * Ajoute la connexion d'un nouveau client à la liste des connectés.
-     * @param connexion Connexion la connexion représentant le client
-     * @return boolean true, si l'ajout a été effectué avec succès, false, sinon
+     * Ajoute la connexion d'un nouveau client ï¿½ la liste des connectï¿½s.
+     * @param connexion Connexion la connexion reprï¿½sentant le client
+     * @return boolean true, si l'ajout a ï¿½tï¿½ effectuï¿½ avec succï¿½s, false, sinon
      */
     public synchronized boolean ajouter(Connexion connexion) {
-        System.out.println(connexion.getAlias()+" est arrivé!");
+        System.out.println(connexion.getAlias()+" est arrivï¿½!");
         boolean res = this.connectes.add(connexion);
         return res;
     }
@@ -181,9 +181,9 @@ public class Serveur implements Lecteur {
         return res;
     }
     /**
-     * Cette méthode scanne tous les clients actuellement connectés à ce serveur pour vérifie s'il y a du texte qui
-     * arrive. Pour chaque texte qui arrive, elle crée un événement contenant les données du texte et demande au
-     * gestionnaire d'événement serveur de traiter l'événement.
+     * Cette mï¿½thode scanne tous les clients actuellement connectï¿½s ï¿½ ce serveur pour vï¿½rifie s'il y a du texte qui
+     * arrive. Pour chaque texte qui arrive, elle crï¿½e un ï¿½vï¿½nement contenant les donnï¿½es du texte et demande au
+     * gestionnaire d'ï¿½vï¿½nement serveur de traiter l'ï¿½vï¿½nement.
      */
     public synchronized void lire() {
         ListIterator<Connexion> iterateur = connectes.listIterator();
@@ -202,26 +202,26 @@ public class Serveur implements Lecteur {
     }
 
     /**
-     * Retourne le port d'écoute de ce serveur
+     * Retourne le port d'ï¿½coute de ce serveur
      *
-     * @return int Le port d'écoute
+     * @return int Le port d'ï¿½coute
      */
     public int getPort() {
         return port;
     }
 
     /**
-     * Spécifie le port d'écoute du serveur.
+     * Spï¿½cifie le port d'ï¿½coute du serveur.
      *
-     * @param port int Le port d'écoute
+     * @param port int Le port d'ï¿½coute
      */
     public void setPort(int port) {
         this.port = port;
     }
     /**
-     * Indique si le serveur a été démarré.
+     * Indique si le serveur a ï¿½tï¿½ dï¿½marrï¿½.
      *
-     * @return boolean true si le serveur est démarré et false sinon
+     * @return boolean true si le serveur est dï¿½marrï¿½ et false sinon
      */
     public boolean isDemarre() {
         return demarre;

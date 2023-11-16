@@ -3,10 +3,10 @@ package com.chat.serveur;
 import com.chat.serveur.Serveur;
 
 /**
- * Cette classe permet de créer des threads capables d'écouter continuellement sur un objet de type Serveur
- * l'arrivée de nouveaux clients.
+ * Cette classe permet de crï¿½er des threads capables d'ï¿½couter continuellement sur un objet de type Serveur
+ * l'arrivï¿½e de nouveaux clients.
  *
- * @author Abdelmoumène Toudeft (Abdelmoumene.Toudeft@etsmtl.ca)
+ * @author Abdelmoumï¿½ne Toudeft (Abdelmoumene.Toudeft@etsmtl.ca)
  * @version 1.0
  * @since 2023-09-01
  */
@@ -17,14 +17,14 @@ public class ThreadEcouteurDeConnexions extends Thread {
     /**
      * Construit un thread sur un serveur.
      *
-     * @param s Serveur Le serveur sur lequel le thread va écouter.
+     * @param s Serveur Le serveur sur lequel le thread va ï¿½couter.
      */
     public ThreadEcouteurDeConnexions(Serveur s) {
         serveur = s;
     }
 
     /**
-     * Méthode principale du thread. Cette méthode appelle continuellement la méthode attendConnexion() du serveur.
+     * Mï¿½thode principale du thread. Cette mï¿½thode appelle continuellement la mï¿½thode attendConnexion() du serveur.
      */
     public void run() {
         while (!interrupted()) {
