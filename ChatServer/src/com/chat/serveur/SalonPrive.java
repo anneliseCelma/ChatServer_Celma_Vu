@@ -1,8 +1,10 @@
 package com.chat.serveur;
 
+import com.echecs.PartieEchecs;
+
 public class SalonPrive {
 
-	
+	private PartieEchecs partieEchecs = new PartieEchecs();
 	private String Host;
 	private String Invite;
 //	private PartieEchecs partieEchecs;
@@ -23,6 +25,13 @@ public class SalonPrive {
 		return Invite;
 	}
 	
+	public void setPartieEchecs(PartieEchecs partieEchecs) {
+		this.partieEchecs = partieEchecs;
+	}
+	
+	public PartieEchecs getPartieEchecs() {
+		return partieEchecs;
+	}
 
 
 

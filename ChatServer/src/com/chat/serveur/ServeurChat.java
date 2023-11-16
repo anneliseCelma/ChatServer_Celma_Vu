@@ -67,6 +67,16 @@ public class ServeurChat extends Serveur {
     		}
     }
    
+    public void envoyerEchec(String aliasHost, String aliasInvite, Connexion connexion) {
+		if (!aliasHost.equals(aliasInvite)) {
+			for (Connexion cnx : connectes) {	
+				if (cnx.getAlias().equals(aliasInvite)) {	 
+					cnx.envoyer(aliasHost+" vous invite a jouer au échec");
+					break;
+				}
+			}
+		}
+}
     
     public List<Invitation>getInvitations(){
     	return Invitations;
