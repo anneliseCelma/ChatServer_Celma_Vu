@@ -109,16 +109,6 @@ public class ServeurChat extends Serveur {
     	}
     }
     
-//    public void declineInvitation(Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
-//    	Invitations.remove(invitation);
-//    	for (Connexion cnx : connectes) {
-//    		if (cnx.getAlias().equals(aliasHost)) {
-//    			cnx.envoyer(aliasInvite+" a refusé votre invitation");
-//    			break;
-//    		}
-//    	}
-//    }
-//    
     public void cancelInvitation (Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
     	Invitations.remove(invitation);
     	for (Connexion cnx : connectes) {
@@ -145,8 +135,6 @@ public class ServeurChat extends Serveur {
         }
     }
    
-    
-    
 
     public List<SalonPrive>getSalonsPrives(){
     	return salonsPrives;
@@ -156,6 +144,12 @@ public class ServeurChat extends Serveur {
     	
     	SalonPrive salonPrive =new SalonPrive(aliasHost,aliasInvite);
     	salonsPrives.add(salonPrive);
+    	for (Connexion cnx : connectes) {
+    		if (cnx.getAlias().equals(aliasHost)) {
+    			cnx.envoyer( aliasInvite+" a rejoins le salon ");
+    			break;
+    		}
+    	}
     }
     
     public SalonPrive findSalonPrive(String alias1, String alias2) {
@@ -168,16 +162,6 @@ public class ServeurChat extends Serveur {
         }
         return null; 
     }
-    
-   // public void removeSalon(Invitation invitation, String aliasInvite,String aliasHost, Connexion connexion) {
-    	//SalonPrive.remove(salon);
-    	//for (Connexion cnx : connectes) {
-    		//if (cnx.getAlias().equals(aliasHost)) {
-    			//cnx.envoyer(aliasInvite+" a refusé votre invitation");
-    			//break;
-    		//}
-    	//}
-    //}
     
     public void envoyerMessagePrive(String aliasHost, String aliasInvite, String prvmessage) {
    
@@ -210,29 +194,7 @@ public class ServeurChat extends Serveur {
     		}	
 	}
     }
-    
-//    public void quitSalon(String aliasDemandeur, String aliasCible) {
-//       SalonPrive salon = findSalonPrive(aliasDemandeur, aliasCible);
-//        if (salon != null) {
-//            salon.removeSalonPrive(aliasDemandeur);
-//            String messageDepart = aliasDemandeur + " a quitté le salon privé.";
-//            for (String alias : salon.getParticipants()) {
-//                if (!alias.equals(aliasDemandeur)) {
-//                    
-//                    if (participantCnx != null) {
-//                        participantCnx.envoyer(messageDepart);
-//                    }
-//                }
-//            }
-//        }
-//   }
 
-    
-    
-    
-    
-
-    
     /**
      * Valide l'arriv�e d'un nouveau client sur le serveur. Cette red�finition
      * de la m�thode h�rit�e de Serveur v�rifie si le nouveau client a envoy�

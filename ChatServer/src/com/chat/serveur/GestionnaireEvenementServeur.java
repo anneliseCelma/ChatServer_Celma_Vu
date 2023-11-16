@@ -18,8 +18,8 @@ import com.chat.serveur.SalonPrive;
  */
 public class GestionnaireEvenementServeur implements GestionnaireEvenement {
     private Serveur serveur;
-    private Invitation invitation;
-    private SalonPrive salonPrive;
+//    private Invitation invitation;
+//    private SalonPrive salonPrive;
 
     /**
      * Construit un gestionnaire d'�v�nements pour un serveur.
@@ -64,33 +64,28 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
                 	break;
                 	
                 case "JOIN":
-                    //System.out.print("Bug");
+                    
                     	String aliasHost=cnx.getAlias();
                     	String aliasInvite=evenement.getArgument();
-                    	//serveur.envoyerInvitation(aliasHost, aliasInvite,cnx);
+                    	Invitation invitationExistante = null;
                     	
-                    	 boolean invitationTrouvee = false;
-                    	 Invitation invitationExistante = null;
+                    	Invitation invitationExiste=serveur.findInvitation(aliasHost, aliasInvite);
+                    	 for (Invitation invitation : serveur.getInvitations()) {
+                 	        if (invitation.getHost().equals(aliasHost) && invitation.getInvite().equals(aliasInvite)) {
+                 	            invitationExistante = invitation;
+                 	            break;
+                 	        }
+                 	    }
+                    	if (invitationExiste!=null) {
+                    		serveur.addSalonPrive(aliasHost,aliasInvite);
+                    		serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
+                    	}
+                    	else {
+                    		Invitation nouvelleInvitation= new Invitation(aliasHost,aliasInvite);
+                    		serveur.addInvitation(nouvelleInvitation);
+                    		serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
+                    	}  	
                     	
-                    	  for (Invitation invitation : serveur.getInvitations()) {
-                    	        if (invitation.getHost().equals(aliasHost) && invitation.getInvite().equals(aliasInvite)) {
-                    	            invitationTrouvee = true;
-                    	            invitationExistante = invitation;
-                    	            break;
-                    	        }
-                    	    }
-
-                    	    if (invitationTrouvee) {
-                    	      
-                    	        serveur.addSalonPrive(aliasHost, aliasInvite);
-                    	        serveur.cancelInvitation(invitationExistante,aliasInvite,aliasHost,cnx);
-                    	    } else {
-                    
-                    	        Invitation nouvelleInvitation = new Invitation(aliasHost, aliasInvite);
-                    	        serveur.addInvitation(nouvelleInvitation);
-                    	        serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
-                    	    }   
-  	
                     	break;
                 case "ACCEPT" :
                 	aliasHost = evenement.getArgument();
@@ -99,9 +94,6 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
               
                 	break;
                 case "DECLINE":
-//                	aliasHost = evenement.getArgument();
-//                	aliasInvite=cnx.getAlias();
-//                	serveur.declineInvitation(invitation,aliasInvite, aliasHost,cnx);
                 	String alias1= cnx.getAlias();
                 	String alias2= evenement.getArgument();
                 	Invitation invitation = serveur.findInvitation(alias1, alias2);
