@@ -130,7 +130,8 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				break;
 			case "INV":
 				String aliasDemandeur=cnx.getAlias();
-				serveur.getInvitationsRecues(aliasDemandeur);
+				String invitations=serveur.getInvitationsRecues(aliasDemandeur);
+				 cnx.envoyer("INV " + invitations);
 
 				break;
 			case "QUIT":

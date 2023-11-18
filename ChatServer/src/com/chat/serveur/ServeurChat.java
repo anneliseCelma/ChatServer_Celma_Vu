@@ -129,23 +129,17 @@ public class ServeurChat extends Serveur {
     	}
     }
     
-    public void getInvitationsRecues(String aliasDemandeur) {
-        //List<String> invitationsRecues = new ArrayList<>();
-        
-        for (Invitation invitation :Invitations) {
+    public String getInvitationsRecues(String aliasDemandeur) {
+        StringBuilder invitationsList = new StringBuilder();
+        for (Invitation invitation : Invitations) {
             if (invitation.getInvite().equals(aliasDemandeur)) {
-            	for (Connexion cnx : connectes) {
-            		if (cnx.getAlias().equals(aliasDemandeur)) {
-            	String Host=invitation.getHost();
-                cnx.envoyer(Host+"\n");
-            		}
-            	}
+                invitationsList.append(invitation.getHost()).append(":");
             }
-        
         }
+        return invitationsList.toString();
     }
-   
-
+ 
+    
     public List<SalonPrive>getSalonsPrives(){
     	return salonsPrives;
     }
