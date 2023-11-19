@@ -80,7 +80,8 @@ public class ServeurChat extends Serveur {
 	
 	public void envoyerMove(String move) {	 
 		for (Connexion cnx:connectes) {
-				cnx.envoyer(move);
+//				cnx.envoyer(move);
+			cnx.envoyer("MOVE "+move);
 			}
 		}
 
