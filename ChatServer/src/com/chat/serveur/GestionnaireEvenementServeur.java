@@ -25,7 +25,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 	boolean jeuEchec = false;
 	boolean prive = false;
 	boolean boolEchec = false;
-	private EtatPartieEchecs partie = new EtatPartieEchecs();
+	private EtatPartieEchecs partie;
 	//    private Invitation invitation;
 	//    private SalonPrive salonPrive;
 
@@ -117,6 +117,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				if(boolEchec) {
 					if(serveur.findSalonPrive(aliasHost, aliasInvite) != null) {
 						echec = new PartieEchecs();
+						partie = new EtatPartieEchecs();
 						serveur.envoyerMove("Jeu echec demarre");
 						serveur.envoyerMove("\n" + partie.toString());
 					}
@@ -170,7 +171,13 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				break;
 
 			case "ABANDON":
+				if(boolEchec) {
 				boolEchec = false;
+				String aliasAbandon = cnx.getAlias();
+				serveur.abandon(aliasAbandon);
+				} else
+					serveur.envoyerMove("Aucune partie d'echec trouvée");
+				
 				break;
 
 			case "CHESS":
@@ -202,7 +209,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 
 				System.out.println(charInit+" "+ intInit);
 
-				if(jeuEchec) {
+				if(boolEchec) {
 					Position posInit = new Position(charInit, intInit);
 					Position posFin = new Position(charFin,intFin);
 

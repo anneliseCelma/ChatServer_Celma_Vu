@@ -77,13 +77,24 @@ public class ServeurChat extends Serveur {
 			}
 		}
 	}
-	
-	public void envoyerMove(String move) {	 
-		for (Connexion cnx:connectes) {
-//				cnx.envoyer(move);
-			cnx.envoyer(move);
+	public void abandon(String alias) { 
+		String aliasGagnant = null;
+		for (Connexion cnx : connectes) {	
+			if(!cnx.getAlias().equals(alias)) {
+				aliasGagnant = cnx.getAlias();
 			}
 		}
+		for (Connexion cnx : connectes) {	
+			cnx.envoyer("Fin de la partie par abandon; Gagnant: " + aliasGagnant);
+		}
+	}
+
+	public void envoyerMove(String move) {	 
+		for (Connexion cnx:connectes) {
+			//				cnx.envoyer(move);
+			cnx.envoyer(move);
+		}
+	}
 
 	public List<Invitation>getInvitations(){
 		return Invitations;
