@@ -77,6 +77,10 @@ public class PartieEchecs {
 			tour = 'b';
 	}
 
+	public Piece[][] getEtat() {
+		return echiquier;
+	}
+
 	/**
 	 * Tente de déplacer une pièce d'une position à une autre sur l'échiquier.
 	 * Le déplacement peut échouer pour plusieurs raisons, selon les règles du
@@ -91,12 +95,12 @@ public class PartieEchecs {
 	 * @return boolean true, si le déplacement a été effectué avec succès, false sinon
 	 */
 	public boolean deplace(Position initiale, Position finale) {
-		
+
 		if (!positionValide(initiale) || !positionValide(finale)) {
 			System.out.println("Pos invalide");
 			return false;
 		}
-		
+
 		System.out.println(initiale.getLigne()-1 + " " + indiceColonne(initiale));
 		Piece piece = echiquier[initiale.getLigne()-1][indiceColonne(initiale)];
 
@@ -115,8 +119,23 @@ public class PartieEchecs {
 			}
 		}
 		if(estEnEchec() == getTour()) {
-			System.out.println("Echec");
-			return false;
+			Piece initTemp;
+			Piece finaleTemp;
+			if(piece.peutSeDeplacer(initiale, finale, echiquier)) {
+				initTemp = echiquier[initiale.getLigne()-1][indiceColonne(initiale)];
+				finaleTemp = echiquier[finale.getLigne()-1][indiceColonne(finale)];
+						
+				echiquier[finale.getLigne()-1][indiceColonne(finale)] = piece;
+				echiquier[initiale.getLigne()-1][indiceColonne(initiale)] = null;
+				
+				if(estEnEchec() == getTour()) {
+					echiquier[initiale.getLigne()-1][indiceColonne(initiale)] = initTemp;
+					echiquier[finale.getLigne()-1][indiceColonne(finale)] = finaleTemp;
+					return false;
+				}
+
+			}
+
 		}
 		if (piece.peutSeDeplacer(initiale, finale, echiquier)) {
 			echiquier[finale.getLigne()-1][indiceColonne(finale)] = piece;
@@ -144,7 +163,7 @@ public class PartieEchecs {
 	 * @return char Le caractère n, si le roi noir est en échec, le caractère b,
 	 * si le roi blanc est en échec, tout autre caractère, sinon.
 	 */
-	public char estEnEchec() {
+	public char estEnEchec( ) {
 		Piece piece;
 		Position posRoiNoir = null;
 		Position posRoiBlanc = null;
@@ -162,9 +181,9 @@ public class PartieEchecs {
 					if (piece.getCouleur() == 'b') {
 						posRoiBlanc = getPosition((byte) i, (byte) j);
 						System.out.println(posRoiBlanc.getLigne() + " " + posRoiBlanc.getColonne());
-						}
-					
-						
+					}
+
+
 				}
 			}
 

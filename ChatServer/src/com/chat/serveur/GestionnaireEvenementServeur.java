@@ -23,6 +23,9 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 	private Serveur serveur;
 	private PartieEchecs echec;
 	boolean jeuEchec = false;
+	boolean prive = false;
+	boolean boolEchec = false;
+	private EtatPartieEchecs partie = new EtatPartieEchecs();
 	//    private Invitation invitation;
 	//    private SalonPrive salonPrive;
 
@@ -84,11 +87,13 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				if (invitationExiste!=null) {
 					serveur.addSalonPrive(aliasHost,aliasInvite);
 					serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
+					prive = false;
 				}
 				else {
 					Invitation nouvelleInvitation= new Invitation(aliasHost,aliasInvite);
 					serveur.addInvitation(nouvelleInvitation);
 					serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
+					prive = true;
 				}  	
 
 				break;
@@ -96,12 +101,14 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				aliasHost = evenement.getArgument();
 				aliasInvite=cnx.getAlias();
 
-				if(serveur.findSalonPrive(aliasHost, aliasInvite) != null) {
-					cnx.envoyer("Jeu echec demarre");
-					jeuEchec = true;
+				if(prive) {
+					if(serveur.findSalonPrive(aliasHost, aliasInvite) != null && boolEchec) {
+						cnx.envoyer("Jeu echec demarre");
+						jeuEchec = true;
+					}
+					else
+						serveur.addSalonPrive(aliasHost, aliasInvite);
 				}
-				else
-					serveur.addSalonPrive(aliasHost, aliasInvite);
 
 
 				break;
@@ -161,7 +168,8 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 						serveur.envoyerEchec(hostEchec, inviteEchec, cnx);
 						echec = new PartieEchecs();
 						jeuEchec = true;
-
+						boolEchec = true;
+						cnx.envoyer("\n" + partie.toString());
 					}  	
 
 					break;
@@ -171,24 +179,35 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 			case "MOVE" :
 				aliasHost = evenement.getArgument();
 				String aliasPOS = evenement.getArgument();
-				
+
 				char charInit = aliasPOS.charAt(0);
 				byte intInit = (byte) Character.getNumericValue(aliasPOS.charAt(1));
 				char charFin = aliasPOS.charAt(2);
 				byte intFin = (byte) Character.getNumericValue(aliasPOS.charAt(3));
 
 				System.out.println(charInit+" "+ intInit);
-				
+
 				if(jeuEchec) {
 					Position posInit = new Position(charInit, intInit);
 					Position posFin = new Position(charFin,intFin);
-					
-					if(echec.deplace(posInit, posFin))
+
+					if(echec.deplace(posInit, posFin)) {
 						serveur.envoyerMove(aliasPOS);
-					
+						echec.changerTour();
+						
+						char[][] temp1;
+						temp1 = partie.getEtatPartieEchecs();
+						temp1[intFin-1][charFin - 'a'] = temp1[intInit-1][charInit - 'a'];
+						temp1[intInit-1][charInit - 'a'] = '.';
+						cnx.envoyer("\n" + partie.toString());
+						
+					}
+					else
+						serveur.envoyerMove("INVALID");
+
 				} else
 					cnx.envoyer("Aucune partie d'echec trouvee");
-				
+
 				break;
 
 			default: //Renvoyer le texte recu convertit en majuscules :
