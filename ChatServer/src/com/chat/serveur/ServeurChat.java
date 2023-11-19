@@ -3,7 +3,8 @@ package com.chat.serveur;
 import com.chat.commun.net.Connexion;
 
 import java.util.ArrayList;
-import java.util.List; 
+import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 
@@ -64,35 +65,6 @@ public class ServeurChat extends Serveur {
 					break;
 				}
 			}
-		}
-	}
-
-	public void envoyerEchec(String aliasHost, String aliasInvite, Connexion connexion) {
-		if (!aliasHost.equals(aliasInvite)) {
-			for (Connexion cnx : connectes) {	
-				if (cnx.getAlias().equals(aliasInvite)) {	 
-					cnx.envoyer(aliasHost+" vous invite a jouer au échec");
-					break;
-				}
-			}
-		}
-	}
-	public void abandon(String alias) { 
-		String aliasGagnant = null;
-		for (Connexion cnx : connectes) {	
-			if(!cnx.getAlias().equals(alias)) {
-				aliasGagnant = cnx.getAlias();
-			}
-		}
-		for (Connexion cnx : connectes) {	
-			cnx.envoyer("Fin de la partie par abandon; Gagnant: " + aliasGagnant);
-		}
-	}
-
-	public void envoyerMove(String move) {	 
-		for (Connexion cnx:connectes) {
-			//				cnx.envoyer(move);
-			cnx.envoyer(move);
 		}
 	}
 
@@ -283,5 +255,32 @@ public class ServeurChat extends Serveur {
 		//String s = "";
 		return historiqueList.toString() ;
 
+	}
+	public void envoyerEchec(String aliasHost, String aliasInvite, Connexion connexion) {
+		if (!aliasHost.equals(aliasInvite)) {
+			for (Connexion cnx : connectes) {	
+				if (cnx.getAlias().equals(aliasInvite)) {	 
+					cnx.envoyer(aliasHost+" vous invite a jouer au échec");
+					break;
+				}
+			}
+		}
+	}
+	public void abandon(String alias) { 
+		String aliasGagnant = null;
+		for (Connexion cnx : connectes) {	
+			if(!cnx.getAlias().equals(alias)) {
+				aliasGagnant = cnx.getAlias();
+			}
+		}
+		for (Connexion cnx : connectes) {	
+			cnx.envoyer("Fin de la partie par abandon; Gagnant: " + aliasGagnant);
+		}
+	}
+
+	public void envoyerMove(String move) {	 
+		for (Connexion cnx:connectes) {
+			cnx.envoyer(move);
+		}
 	}
 }

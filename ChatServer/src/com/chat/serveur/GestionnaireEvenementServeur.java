@@ -22,9 +22,9 @@ import static com.echecs.util.EchecsUtil.*;
 public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 	private Serveur serveur;
 	private PartieEchecs echec;
-	boolean jeuEchec = false;
-	boolean prive = false;
-	boolean boolEchec = false;
+	private boolean jeuEchec = false;
+	private boolean prive = false;
+	private boolean boolEchec = false;
 	private EtatPartieEchecs partie;
 	//    private Invitation invitation;
 	//    private SalonPrive salonPrive;
@@ -88,14 +88,14 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 					serveur.addSalonPrive(aliasHost,aliasInvite);
 					serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
 					prive = false;
-				
+
 				}
 				else {
 					Invitation nouvelleInvitation= new Invitation(aliasHost,aliasInvite);
 					serveur.addInvitation(nouvelleInvitation);
 					serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
 					prive = true;
-					
+
 				}  	
 
 				break;
@@ -120,6 +120,12 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 						partie = new EtatPartieEchecs();
 						serveur.envoyerMove("Jeu echec demarre");
 						serveur.envoyerMove("\n" + partie.toString());
+
+						echec.setAliasJoueur1(aliasHost);
+						echec.setAliasJoueur2(aliasInvite);
+
+						serveur.envoyerMove("	"+echec.getAliasJoueur1() + ": " + echec.getCouleurJoueur1());
+						serveur.envoyerMove("	"+echec.getAliasJoueur2() + ": " + echec.getCouleurJoueur2());
 					}
 				}
 
@@ -172,12 +178,12 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 
 			case "ABANDON":
 				if(boolEchec) {
-				boolEchec = false;
-				String aliasAbandon = cnx.getAlias();
-				serveur.abandon(aliasAbandon);
+					boolEchec = false;
+					String aliasAbandon = cnx.getAlias();
+					serveur.abandon(aliasAbandon);
 				} else
 					serveur.envoyerMove("Aucune partie d'echec trouvée");
-				
+
 				break;
 
 			case "CHESS":
@@ -189,9 +195,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				if(serveur.findSalonPrive(hostEchec, inviteEchec) != null && prive) {
 					if (invitationEchec == null) {
 						serveur.envoyerEchec(hostEchec, inviteEchec, cnx);
-
 						boolEchec = true;
-
 					}  	
 
 					break;
@@ -199,6 +203,25 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 					cnx.envoyer("Faut etre dans un salon privé pour jouer");
 				break;
 			case "MOVE" :
+				String aliasMove = cnx.getAlias();
+
+				serveur.envoyerMove("Tour: " + echec.getTour());
+				
+				if(aliasMove.equals(echec.getAliasJoueur1())) {
+					if(echec.getTour() != echec.getCouleurJoueur1()) {
+						cnx.envoyer("C'est le tour à " + echec.getAliasJoueur2());
+						break;
+					}
+
+				}
+				if(aliasMove.equals(echec.getAliasJoueur2())) {
+					if(echec.getTour() != echec.getCouleurJoueur2()) {
+						cnx.envoyer("C'est le tour à " + echec.getAliasJoueur1());
+						break;
+					}
+				}
+
+
 				aliasHost = evenement.getArgument();
 				String aliasPOS = evenement.getArgument();
 

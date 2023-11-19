@@ -5,6 +5,8 @@ import com.echecs.util.EchecsUtil;
 
 import static com.echecs.util.EchecsUtil.*;
 
+import java.util.Random;
+
 /**
  * Représente une partie de jeu d'échecs. Orcheste le déroulement d'une partie :
  * déplacement des pièces, vérification d'échec, d'échec et mat,...
@@ -65,6 +67,18 @@ public class PartieEchecs {
 
 		echiquier[0][4] = new Roi('n');
 		echiquier[7][4] = new Roi('b');
+
+		Random random = new Random();
+		if(random.nextBoolean())
+			this.couleurJoueur1 = 'b';
+		else
+			this.couleurJoueur1 = 'n';
+
+		if(couleurJoueur1 == 'b')
+			this.couleurJoueur2 = 'n';
+		else
+			this.couleurJoueur2 = 'b';
+		
 	}
 
 	/**
@@ -124,10 +138,10 @@ public class PartieEchecs {
 			if(piece.peutSeDeplacer(initiale, finale, echiquier)) {
 				initTemp = echiquier[initiale.getLigne()-1][indiceColonne(initiale)];
 				finaleTemp = echiquier[finale.getLigne()-1][indiceColonne(finale)];
-						
+
 				echiquier[finale.getLigne()-1][indiceColonne(finale)] = piece;
 				echiquier[initiale.getLigne()-1][indiceColonne(initiale)] = null;
-				
+
 				if(estEnEchec() == getTour()) {
 					echiquier[initiale.getLigne()-1][indiceColonne(initiale)] = initTemp;
 					echiquier[finale.getLigne()-1][indiceColonne(finale)] = finaleTemp;
@@ -137,21 +151,19 @@ public class PartieEchecs {
 			}
 
 		}
-		
+
 		if (piece.peutSeDeplacer(initiale, finale, echiquier)) {
 			Piece initTemp;
 			Piece finaleTemp;
-			
+
 			initTemp = echiquier[initiale.getLigne()-1][indiceColonne(initiale)];
 			finaleTemp = echiquier[finale.getLigne()-1][indiceColonne(finale)];
-			
+
 			echiquier[finale.getLigne()-1][indiceColonne(finale)] = piece;
 			echiquier[initiale.getLigne()-1][indiceColonne(initiale)] = null;
-			
-			System.out.println(getTour());
-			
-			
-				
+
+
+
 			System.out.println("se deplace !!");
 			if (piece.equals(roi))
 				roque = false;
