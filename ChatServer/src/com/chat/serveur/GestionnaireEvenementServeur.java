@@ -1,12 +1,15 @@
 package com.chat.serveur;
 
-import com.chat.commun.evenement.Evenement;
+import com.chat.commun.evenement.Evenement; 
 import com.chat.commun.evenement.GestionnaireEvenement;
 import com.chat.commun.net.Connexion;
 
 import com.chat.serveur.Invitation;
 import com.chat.serveur.SalonPrive;
-
+import com.echecs.PartieEchecs;
+import com.echecs.Position;
+import com.echecs.util.EchecsUtil;
+import static com.echecs.util.EchecsUtil.*;
 
 /**
  * Cette classe repr�sente un gestionnaire d'�v�nement d'un serveur. Lorsqu'un serveur re�oit un texte d'un client,
@@ -18,6 +21,8 @@ import com.chat.serveur.SalonPrive;
  */
 public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 	private Serveur serveur;
+	private PartieEchecs echec;
+	boolean jeuEchec = false;
 	//    private Invitation invitation;
 	//    private SalonPrive salonPrive;
 
@@ -90,9 +95,11 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 			case "ACCEPT" :
 				aliasHost = evenement.getArgument();
 				aliasInvite=cnx.getAlias();
-				
-				if(serveur.findSalonPrive(aliasHost, aliasInvite) != null)
+
+				if(serveur.findSalonPrive(aliasHost, aliasInvite) != null) {
 					cnx.envoyer("Jeu echec demarre");
+					jeuEchec = true;
+				}
 				else
 					serveur.addSalonPrive(aliasHost, aliasInvite);
 
@@ -131,7 +138,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 			case "INV":
 				String aliasDemandeur=cnx.getAlias();
 				String invitations=serveur.getInvitationsRecues(aliasDemandeur);
-				 cnx.envoyer("INV " + invitations);
+				cnx.envoyer("INV " + invitations);
 
 				break;
 			case "QUIT":
@@ -152,12 +159,36 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				if(serveur.findSalonPrive(hostEchec, inviteEchec) != null) {
 					if (invitationEchec == null) {
 						serveur.envoyerEchec(hostEchec, inviteEchec, cnx);
-						
+						echec = new PartieEchecs();
+						jeuEchec = true;
+
 					}  	
 
 					break;
 				} else 
 					cnx.envoyer("Faut etre dans un salon privé pour jouer");
+				break;
+			case "MOVE" :
+				aliasHost = evenement.getArgument();
+				String aliasPOS = evenement.getArgument();
+				
+				char charInit = aliasPOS.charAt(0);
+				byte intInit = (byte) Character.getNumericValue(aliasPOS.charAt(1));
+				char charFin = aliasPOS.charAt(2);
+				byte intFin = (byte) Character.getNumericValue(aliasPOS.charAt(3));
+
+				System.out.println(charInit+" "+ intInit);
+				
+				if(jeuEchec) {
+					Position posInit = new Position(charInit, intInit);
+					Position posFin = new Position(charFin,intFin);
+					
+					if(echec.deplace(posInit, posFin))
+						serveur.envoyerMove(aliasPOS);
+					
+				} else
+					cnx.envoyer("Aucune partie d'echec trouvee");
+				
 				break;
 
 			default: //Renvoyer le texte recu convertit en majuscules :

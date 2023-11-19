@@ -7,7 +7,6 @@ import static com.echecs.util.EchecsUtil.indiceColonne;
 import static com.echecs.util.EchecsUtil.indiceLigne;
 
 public class Pion extends Piece{
-    private PartieEchecs partie;
     public Pion(char color) {
         super(color);
     }
@@ -20,7 +19,7 @@ public class Pion extends Piece{
             return true;
         }
         if(indiceLigne(pos2) == 7 || indiceLigne(pos2) == 0)
-            echiquier[indiceLigne(pos2)][indiceColonne(pos2)] = new Dame(partie.getCouleurJoueur1());
+            echiquier[indiceLigne(pos2)][indiceColonne(pos2)] = new Dame(couleur);
         return false;
     }
 }
