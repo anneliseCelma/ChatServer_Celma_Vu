@@ -88,28 +88,38 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 					serveur.addSalonPrive(aliasHost,aliasInvite);
 					serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
 					prive = false;
+				
 				}
 				else {
 					Invitation nouvelleInvitation= new Invitation(aliasHost,aliasInvite);
 					serveur.addInvitation(nouvelleInvitation);
 					serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
 					prive = true;
+					
 				}  	
 
 				break;
-			case "ACCEPT" :
+			case "JOINOK" :
 				aliasHost = evenement.getArgument();
 				aliasInvite=cnx.getAlias();
 
-				if(prive) {
-					if(serveur.findSalonPrive(aliasHost, aliasInvite) != null && boolEchec) {
+				if(serveur.findSalonPrive(aliasHost, aliasInvite) == null && prive) {
+					serveur.addSalonPrive(aliasHost, aliasInvite);
+					jeuEchec = true;
+				}
+
+
+				break;
+			case "CHESSOK" :
+				aliasHost = evenement.getArgument();
+				aliasInvite=cnx.getAlias();
+
+				if(boolEchec) {
+					if(serveur.findSalonPrive(aliasHost, aliasInvite) != null) {
+						echec = new PartieEchecs();
 						serveur.envoyerMove("Jeu echec demarre");
-						jeuEchec = true;
-						boolEchec = true;
 						serveur.envoyerMove("\n" + partie.toString());
 					}
-					else
-						serveur.addSalonPrive(aliasHost, aliasInvite);
 				}
 
 
@@ -159,19 +169,22 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				cnx.envoyer("HIST " + serveur.historique());
 				break;
 
+			case "ABANDON":
+				boolEchec = false;
+				break;
+
 			case "CHESS":
 				String hostEchec = cnx.getAlias();
 				String inviteEchec = evenement.getArgument();
 				Invitation invitationEchec = null;
 				Invitation invitationPartie = serveur.findInvitation(hostEchec, inviteEchec);
 
-				if(serveur.findSalonPrive(hostEchec, inviteEchec) != null) {
+				if(serveur.findSalonPrive(hostEchec, inviteEchec) != null && prive) {
 					if (invitationEchec == null) {
 						serveur.envoyerEchec(hostEchec, inviteEchec, cnx);
-						echec = new PartieEchecs();
-						
+
 						boolEchec = true;
-						
+
 					}  	
 
 					break;
@@ -196,13 +209,13 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 					if(echec.deplace(posInit, posFin)) {
 						serveur.envoyerMove(aliasPOS);
 						echec.changerTour();
-						
+
 						char[][] temp1;
 						temp1 = partie.getEtatPartieEchecs();
 						temp1[intFin-1][charFin - 'a'] = temp1[intInit-1][charInit - 'a'];
 						temp1[intInit-1][charInit - 'a'] = '.';
 						serveur.envoyerMove("\n" + partie.toString());
-						
+
 					}
 					else
 						serveur.envoyerMove("INVALID");
