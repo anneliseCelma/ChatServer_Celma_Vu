@@ -14,7 +14,7 @@ public class Pion extends Piece{
 
 	@Override
 	public boolean peutSeDeplacer(Position pos1, Position pos2, Piece[][] echiquier) {
-
+		System.out.println(pos1.getLigne()-1+ " " +indiceColonne(pos1));
 		if(echiquier[pos1.getLigne()-1][indiceColonne(pos1)].getCouleur() == 'b' && echiquier[pos1.getLigne()-1][indiceColonne(pos1)] != null) {
 			if(pos1.estSurLaMemeColonneQue(pos2)){
 				if(pos1.getLigne() - pos2.getLigne() == 1) {

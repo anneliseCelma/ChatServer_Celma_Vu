@@ -103,8 +103,10 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 
 				if(prive) {
 					if(serveur.findSalonPrive(aliasHost, aliasInvite) != null && boolEchec) {
-						cnx.envoyer("Jeu echec demarre");
+						serveur.envoyerMove("Jeu echec demarre");
 						jeuEchec = true;
+						boolEchec = true;
+						serveur.envoyerMove("\n" + partie.toString());
 					}
 					else
 						serveur.addSalonPrive(aliasHost, aliasInvite);
@@ -167,9 +169,9 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 					if (invitationEchec == null) {
 						serveur.envoyerEchec(hostEchec, inviteEchec, cnx);
 						echec = new PartieEchecs();
-						jeuEchec = true;
+						
 						boolEchec = true;
-						cnx.envoyer("\n" + partie.toString());
+						
 					}  	
 
 					break;
@@ -199,7 +201,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 						temp1 = partie.getEtatPartieEchecs();
 						temp1[intFin-1][charFin - 'a'] = temp1[intInit-1][charInit - 'a'];
 						temp1[intInit-1][charInit - 'a'] = '.';
-						cnx.envoyer("\n" + partie.toString());
+						serveur.envoyerMove("\n" + partie.toString());
 						
 					}
 					else

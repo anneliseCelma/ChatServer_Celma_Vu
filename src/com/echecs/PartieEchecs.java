@@ -101,7 +101,6 @@ public class PartieEchecs {
 			return false;
 		}
 
-		System.out.println(initiale.getLigne()-1 + " " + indiceColonne(initiale));
 		Piece piece = echiquier[initiale.getLigne()-1][indiceColonne(initiale)];
 
 		if (piece == null) {
@@ -119,6 +118,7 @@ public class PartieEchecs {
 			}
 		}
 		if(estEnEchec() == getTour()) {
+			System.out.println("ON est entrer dans echec");
 			Piece initTemp;
 			Piece finaleTemp;
 			if(piece.peutSeDeplacer(initiale, finale, echiquier)) {
@@ -137,9 +137,21 @@ public class PartieEchecs {
 			}
 
 		}
+		
 		if (piece.peutSeDeplacer(initiale, finale, echiquier)) {
+			Piece initTemp;
+			Piece finaleTemp;
+			
+			initTemp = echiquier[initiale.getLigne()-1][indiceColonne(initiale)];
+			finaleTemp = echiquier[finale.getLigne()-1][indiceColonne(finale)];
+			
 			echiquier[finale.getLigne()-1][indiceColonne(finale)] = piece;
 			echiquier[initiale.getLigne()-1][indiceColonne(initiale)] = null;
+			
+			System.out.println(getTour());
+			
+			
+				
 			System.out.println("se deplace !!");
 			if (piece.equals(roi))
 				roque = false;
@@ -191,8 +203,9 @@ public class PartieEchecs {
 					piece = echiquier[i][j];
 					if (piece != null && piece.getCouleur() == 'b' && !(piece instanceof Pion)) {
 						Position positionPiece = EchecsUtil.getPosition((byte) i, (byte) j);
+						System.out.println(positionPiece.getLigne() + ":" + positionPiece.getColonne());
 						if (piece.peutSeDeplacer(positionPiece, posRoiNoir, echiquier) && !roiNoirEchec) {
-							System.out.println("NOIR EN ECHEC");
+							System.out.println("AUTO NOIR ECHEC");
 							roiNoirEchec = true;
 						}
 					}

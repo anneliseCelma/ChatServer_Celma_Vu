@@ -23,7 +23,7 @@ public class Fou extends Piece{
     	            int ligInter = (pos1.getLigne()-1) + (i * ligDir);
     	            int colInter = indiceColonne(pos1.getColonne()) + (i * colDir);
     	            
-    	            System.out.println(ligInter + " " + colInter + " DIR" + ligInter + " "+ colInter);
+    	            
     	            if (ligInter < 0 || ligInter >= 8 || colInter < 0 || colInter >= 8) {
     	                return false;
     	            }
