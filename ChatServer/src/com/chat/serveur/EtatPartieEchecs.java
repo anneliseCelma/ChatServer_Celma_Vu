@@ -44,7 +44,7 @@ public class EtatPartieEchecs {
             }
             matrice.append('\n');
         }
-
+	    matrice.append('\n');
         matrice.append("  a b c d e f g h");
 
         return matrice.toString();

@@ -176,11 +176,9 @@ public class PartieEchecs {
 				if (piece instanceof Roi) {
 					if (piece.getCouleur() == 'n') {
 						posRoiNoir = getPosition((byte) i, (byte) j);
-						System.out.println(posRoiNoir.getLigne() + " " + posRoiNoir.getColonne());
 					}
 					if (piece.getCouleur() == 'b') {
 						posRoiBlanc = getPosition((byte) i, (byte) j);
-						System.out.println(posRoiBlanc.getLigne() + " " + posRoiBlanc.getColonne());
 					}
 
 
