@@ -73,31 +73,29 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 
 			case "JOIN":
 
-				String aliasHost=cnx.getAlias();
-				String aliasInvite=evenement.getArgument();
-				Invitation invitationExistante = null;
+				  String aliasHost = cnx.getAlias();
+				    String aliasInvite = evenement.getArgument();
+				    Invitation invitationExiste = serveur.findInvitation(aliasHost, aliasInvite);
 
-				Invitation invitationExiste=serveur.findInvitation(aliasHost, aliasInvite);
-				for (Invitation invitation : serveur.getInvitations()) {
-					if (invitation.getHost().equals(aliasHost) && invitation.getInvite().equals(aliasInvite)) {
-						invitationExistante = invitation;
-						break;
-					}
-				}
-				if (invitationExiste!=null) {
-					serveur.addSalonPrive(aliasHost,aliasInvite);
-//					serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
-					prive = false;
+				    if (invitationExiste != null) {
+				        cnx.envoyer("Votre invitation est en attente.");
+				    } else {
+				        Invitation invitationInverse = serveur.findInvitation(aliasInvite, aliasHost);
 
-				}
-				else {
-					Invitation nouvelleInvitation= new Invitation(aliasHost,aliasInvite);
-					serveur.addInvitation(nouvelleInvitation);
-					serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
-					prive = true;
-
-				}  	
-
+				        if (invitationInverse != null) {
+				      
+				            serveur.addSalonPrive(aliasHost, aliasInvite);
+				         
+				            serveur.cancelInvitation(invitationInverse, aliasHost, aliasInvite, cnx);
+				            prive = false;
+				        } else {
+				          
+				            Invitation nouvelleInvitation = new Invitation(aliasHost, aliasInvite);
+				            serveur.addInvitation(nouvelleInvitation);
+				            serveur.envoyerInvitation(aliasHost, aliasInvite, cnx);
+				            prive = true;
+				        }
+				    }
 				break;
 			case "JOINOK" :
 				aliasHost = evenement.getArgument();
