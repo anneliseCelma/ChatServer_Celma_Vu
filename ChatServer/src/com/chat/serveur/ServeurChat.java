@@ -119,6 +119,14 @@ public class ServeurChat extends Serveur {
 		}
 	}
 
+	public void removeInvitation(String aliasDemandeur, String aliasCible) {
+	    Invitation invitation = findInvitation(aliasDemandeur, aliasCible);
+	    if (invitation != null) {
+	        Invitations.remove(invitation);
+	        
+	        }
+	    
+	}
 	public String getInvitationsRecues(String aliasDemandeur) {
 		StringBuilder invitationsList = new StringBuilder();
 		for (Invitation invitation : Invitations) {

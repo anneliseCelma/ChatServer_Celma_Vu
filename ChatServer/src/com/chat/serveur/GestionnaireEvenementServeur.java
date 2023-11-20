@@ -86,7 +86,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				}
 				if (invitationExiste!=null) {
 					serveur.addSalonPrive(aliasHost,aliasInvite);
-					serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
+//					serveur.cancelInvitation(invitationExiste, aliasInvite, aliasHost, cnx);
 					prive = false;
 
 				}
@@ -171,6 +171,7 @@ public class GestionnaireEvenementServeur implements GestionnaireEvenement {
 				aliasDemandeur = cnx.getAlias();
 				String aliasCible= evenement.getArgument();
 				serveur.closeSalonPrive(aliasDemandeur,aliasCible);
+				serveur.removeInvitation(aliasDemandeur,aliasCible);
 				break;
 			case "HIST":
 				cnx.envoyer("HIST " + serveur.historique());
